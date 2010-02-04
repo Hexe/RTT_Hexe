@@ -1,0 +1,7 @@
+## Interface: 30300
+## Title: RTT_Hexe
+## Notes: Layout for RantTooltip
+## Author: Hexe
+## RequiredDeps: RantTooltip
+
+RTT_Hexe.lua
