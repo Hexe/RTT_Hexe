@@ -129,7 +129,7 @@ local layout = function(self)
 				self:SetBackdropBorderColor(GameTooltip_UnitColor(unit))
 			end
 			local r, g, b = UnitSelectionColor(unit)
-			self:SetBackdropColor(r-.85, g-.85, b-.80)
+			--self:SetBackdropColor(r-.85, g-.85, b-.80)
 			if statusBarsInTooltip then
 				if (not UnitIsDead(unit)) and (UnitPowerType(unit) == 0) then
 					showStatusBar(self.HealthBar)
@@ -150,7 +150,7 @@ local layout = function(self)
 				end
 			end
 		end
-		
+		if statusBarsInTooltip == true then
 		for _, name in ipairs{"Health", "Power"} do
 			local statusBar = CreateFrame("StatusBar", nil, self)
 			statusBar:SetBackdrop(sbbackdrop)
@@ -197,7 +197,41 @@ local layout = function(self)
 			self[name.."Bar"] = statusBar
 		end
 	end
+	end
 	
+	--[[self.OverrideUpdateHealthBar = statusBarsInTooltip and function(self, bar)
+		if self.unit and UnitIsGhost(self.unit) then
+			if bar:IsShown() then
+				hideStatusBar(bar)
+			end
+		end
+	end]]
+		
+		if not statusBarsInTooltip then
+			local statusBar = CreateFrame("StatusBar", nil, self)
+			statusBar:SetStatusBarTexture(barTexture)
+			statusBar:SetStatusBarColor(0, 1, 0)
+			
+			statusBar.bg = statusBar.bg or statusBar:CreateTexture(nil, "BORDER")
+			statusBar.bg:SetAllPoints(statusBar)
+			
+			statusBar.Anchor = { 0, 10 }
+			statusBar.bg:SetTexture(0, 0, 0, 0.5)
+			
+			statusBar.text = statusBar.text or statusBar:CreateFontString(nil, "OVERLAY")
+			statusBar.text:SetFont(font, 10, "OUTLINE")
+			--statusBar.text:SetFontObject("GameFontHighlightSmall")
+			statusBar.text:SetJustifyH("CENTER")
+			statusBar.text:SetAllPoints(statusBar)
+			statusBar.Tags = "$cur / $max"
+			
+			statusBar:SetHeight(8)
+			statusBar:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 2, -1)
+			statusBar:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", -2, -1)
+			
+			GameTooltip.HealthBar = statusBar
+		end
+		
 	if self == ItemRefTooltip then
 		self.itemIcon = self:CreateTexture(nil, "OVERLAY")
 		self.itemIcon:SetWidth(37); self.itemIcon:SetHeight(37)
@@ -221,7 +255,7 @@ local layout = function(self)
 			end
 		end)
 	end
-end
+end 
 
 RantTooltip:RegisterLayout("Hexe", layout)
 RantTooltip:UseLayout("Hexe")
