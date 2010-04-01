@@ -8,7 +8,7 @@ local am = function(msg)
 	ChatFrame1:AddMessage(msg)
 end
 
-local font = "Interface\\AddOns\\RTT_Hexe\\media\\ABF.ttf"
+local font = "Fonts\\ARIALN.ttf"
 local barTexture = "Interface\\AddOns\\RTT_Hexe\\media\\Flat"
 local barTexture2 = "Interface\\AddOns\\RTT_Hexe\\media\\Hatched"
 local statusBarsInTooltip = true
@@ -73,9 +73,9 @@ RantTooltip.Tags["$hbartext"] = function(unit, bar)
 			hpmax = _G["Unit"..bar.."Max"](unit)
 		end
 		if (hpcur < hpmax) then
-			return hpcur.."/"..hpmax
+			return hpcur.."|"..hpmax
 		else
-			return hpmax 
+			return hpmax
 		end
 	end
 end
@@ -87,7 +87,7 @@ RantTooltip.Tags["$hrank"] = function(unit) return UnitIsPlayer(unit) and GetGui
 local layout = function(self)
 	self:SetBackdrop(backdrop)
 	self:SetScale(0.75)
-	self:SetBackdropColor(0, 0, 0)
+	self:SetBackdropColor(0, 0, 0, 0)
 	self:SetBackdropBorderColor(TOOLTIP_DEFAULT_COLOR.r, TOOLTIP_DEFAULT_COLOR.g, TOOLTIP_DEFAULT_COLOR.b)
 	
 	self.bg = self.bg or self:CreateTexture(nil, "BACKGROUND")
@@ -109,8 +109,8 @@ local layout = function(self)
 			"{Talents: $spec} {($talents)}",
 		}
 		
-		GameTooltipHeaderText:SetFont(font, 14, "OUTLINE")
-		GameTooltipText:SetFont(font, 13, "OUTLINE")
+		GameTooltipHeaderText:SetFont(font, 14, "THINOUTLINE")
+		GameTooltipText:SetFont(font, 13, "THINOUTLINE")
 		
 		self.raidIcon = self.raidIcon or self:CreateTexture(nil, "ARTWORK")
 		self.raidIcon:SetWidth(16); self.raidIcon:SetHeight(16)
@@ -167,7 +167,7 @@ local layout = function(self)
 				statusBar.unitColors = true
 					
 				statusBar.text = statusBar.text or statusBar:CreateFontString(nil, "OVERLAY")
-				statusBar.text:SetFont(font, 10, "OUTLINE")
+				statusBar.text:SetFont(font, 11, "OUTLINE")
 				statusBar.text:SetJustifyH("CENTER")
 				statusBar.text:SetAllPoints(statusBar)
 				statusBar.Tags = "$hbartext   $perc%"
@@ -237,7 +237,7 @@ end
 				local link = select(2,self:GetItem())
 				local rarity = select(3,GetItemInfo(link)) or 1
 				self:SetBackdropBorderColor(GetItemQualityColor(rarity))
-				self:SetBackdropColor(0.11, 0.11, 0.11)
+				self:SetBackdropColor(0.3, 0.3, 0.3)
 			end
 		end)
 				
