@@ -8,7 +8,7 @@ local am = function(msg)
 	ChatFrame1:AddMessage(msg)
 end
 
-local font = "Interface\\AddOns\\RTT_Hexe\\media\\BaarSophia.ttf"
+local font = "Interface\\AddOns\\RTT_Hexe\\media\\ABF.ttf"
 local barTexture = "Interface\\AddOns\\RTT_Hexe\\media\\Flat"
 local barTexture2 = "Interface\\AddOns\\RTT_Hexe\\media\\Hatched"
 local statusBarsInTooltip = true
@@ -62,17 +62,21 @@ end
 
 RantTooltip.Tags["$hshcur"] = function(unit, bar) return shortValue(RantTooltip.Tags["$cur"](unit, bar)) end
 RantTooltip.Tags["$hshmax"] = function(unit, bar) return shortValue(RantTooltip.Tags["$max"](unit, bar)) end
-RantTooltip.Tags["$hperc"] = function(unit, bar) 
+RantTooltip.Tags["$hbartext"] = function(unit, bar)
 	if bar then
 		local hpcur, hpmax
 		if bar == "Health" then
-			hpcur = GameTooltipStatusBar:GetValue()
+			hpcur = GameTooltipStatusBar:GetValue()			
 			hpmax = select(2,GameTooltipStatusBar:GetMinMaxValues())
 		else
 			hpcur = _G["Unit"..bar](unit)
 			hpmax = _G["Unit"..bar.."Max"](unit)
 		end
-		return (hpcur < hpmax) and floor((hpcur/hpmax)*100)..'%'
+		if (hpcur < hpmax) then
+			return hpcur.."/"..hpmax
+		else
+			return hpmax 
+		end
 	end
 end
 RantTooltip.Tags["$hdead"] = function(unit) return UnitIsDead(unit) and "|cffB30000DEAD|r" or UnitIsGhost(unit) and "|cff949494GHOST|r" end
@@ -129,7 +133,6 @@ local layout = function(self)
 				self:SetBackdropBorderColor(GameTooltip_UnitColor(unit))
 			end
 			local r, g, b = UnitSelectionColor(unit)
-			--self:SetBackdropColor(r-.85, g-.85, b-.80)
 			if statusBarsInTooltip then
 				if (not UnitIsDead(unit)) and (UnitPowerType(unit) == 0) then
 					showStatusBar(self.HealthBar)
@@ -141,11 +144,9 @@ local layout = function(self)
 					showStatusBar(self.HealthBar)
 					self.PowerBar:Hide()
 				elseif UnitIsDeadOrGhost(unit) then
-					--ChatFrame1:AddMessage("aargh!!")
 					self.HealthBar:Hide()
 					self.PowerBar:Hide()
 				else
-					--ChatFrame1:AddMessage("bleaahhh!!")
 					self.PowerBar:Hide()
 				end
 			end
@@ -166,10 +167,10 @@ local layout = function(self)
 				statusBar.unitColors = true
 					
 				statusBar.text = statusBar.text or statusBar:CreateFontString(nil, "OVERLAY")
-				statusBar.text:SetFont(font, 11, "OUTLINE")
+				statusBar.text:SetFont(font, 10, "OUTLINE")
 				statusBar.text:SetJustifyH("CENTER")
 				statusBar.text:SetAllPoints(statusBar)
-				statusBar.Tags = "$hshcur/$hshmax   {<$hperc>}"
+				statusBar.Tags = "$hbartext   $perc%"
 					
 				statusBar:SetHeight(8)
 				statusBar:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 10, 0)
@@ -180,10 +181,10 @@ local layout = function(self)
 				statusBar.powerColors = true
 						
 				statusBar.text = statusBar.text or statusBar:CreateFontString(nil, "OVERLAY")
-				statusBar.text:SetFont(font, 11, "OUTLINE")
+				statusBar.text:SetFont(font, 10, "OUTLINE")
 				statusBar.text:SetJustifyH("CENTER")
 				statusBar.text:SetAllPoints(statusBar)
-				statusBar.Tags = "$hshcur/$hshmax"
+				statusBar.Tags = "$hbartext"
 						
 				statusBar.bg:SetTexture("Interface\\ChatFrame\\ChatFrameBackground")
 				statusBar.bg.color = 0.3
@@ -197,40 +198,31 @@ local layout = function(self)
 			self[name.."Bar"] = statusBar
 		end
 	end
-	end
-	
-	--[[self.OverrideUpdateHealthBar = statusBarsInTooltip and function(self, bar)
-		if self.unit and UnitIsGhost(self.unit) then
-			if bar:IsShown() then
-				hideStatusBar(bar)
-			end
-		end
-	end]]
+end
 		
-		if not statusBarsInTooltip then
-			local statusBar = CreateFrame("StatusBar", nil, self)
-			statusBar:SetStatusBarTexture(barTexture)
-			statusBar:SetStatusBarColor(0, 1, 0)
+	if not statusBarsInTooltip then
+		local statusBar = CreateFrame("StatusBar", nil, self)
+		statusBar:SetStatusBarTexture(barTexture)
+		statusBar:SetStatusBarColor(0, 1, 0)
 			
-			statusBar.bg = statusBar.bg or statusBar:CreateTexture(nil, "BORDER")
-			statusBar.bg:SetAllPoints(statusBar)
+		statusBar.bg = statusBar.bg or statusBar:CreateTexture(nil, "BORDER")
+		statusBar.bg:SetAllPoints(statusBar)
 			
-			statusBar.Anchor = { 0, 10 }
-			statusBar.bg:SetTexture(0, 0, 0, 0.5)
+		statusBar.Anchor = { 0, 10 }
+		statusBar.bg:SetTexture(0, 0, 0, 0.5)
 			
-			statusBar.text = statusBar.text or statusBar:CreateFontString(nil, "OVERLAY")
-			statusBar.text:SetFont(font, 10, "OUTLINE")
-			--statusBar.text:SetFontObject("GameFontHighlightSmall")
-			statusBar.text:SetJustifyH("CENTER")
-			statusBar.text:SetAllPoints(statusBar)
-			statusBar.Tags = "$cur / $max"
+		statusBar.text = statusBar.text or statusBar:CreateFontString(nil, "OVERLAY")
+		statusBar.text:SetFont(font, 9, "OUTLINE")
+		statusBar.text:SetJustifyH("CENTER")
+		statusBar.text:SetAllPoints(statusBar)
+		statusBar.Tags = "$hbartext"
 			
-			statusBar:SetHeight(8)
-			statusBar:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 2, -1)
-			statusBar:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", -2, -1)
+		statusBar:SetHeight(8)
+		statusBar:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 2, -1)
+		statusBar:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", -2, -1)
 			
-			GameTooltip.HealthBar = statusBar
-		end
+		GameTooltip.HealthBar = statusBar
+	end
 		
 	if self == ItemRefTooltip then
 		self.itemIcon = self:CreateTexture(nil, "OVERLAY")
